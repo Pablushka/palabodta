@@ -4,6 +4,7 @@
 )]
 
 fn get_random_word() -> String {
+    // https://palabras-aleatorias-public-api.herokuapp.com/random-by-length?length=6
     let word: &str = "BANANA";
     word.to_string()
 }
