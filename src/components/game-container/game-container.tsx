@@ -10,6 +10,7 @@ interface LetterProps {
 	letter: string,
 	clueClass: string
 };
+
 const InitialRows: string[][] = [
 	['', '', '', '', '', ''],
 	['', '', '', '', '', ''],
@@ -18,19 +19,21 @@ const InitialRows: string[][] = [
 	['', '', '', '', '', ''],
 	['', '', '', '', '', ''],
 ];
+
 const GameContainer = () => {
 
 	// TODO: usar InitialRows cuando termine el testeo
-	const [wordRows, setWordRows] = useState([
-		['B', 'A', 'A', 'N', 'E', 'F'],
-		['', '', '', '', '', ''],
-		['', '', '', '', '', ''],
-		['', '', '', '', '', ''],
-		['', '', '', '', '', ''],
-		['', '', '', '', '', ''],
-	]);
-	// const [wordRows, setWordRows] = useState(InitialRows);
+	// const [wordRows, setWordRows] = useState([
+	// 	['B', 'A', 'A', 'N', 'E', 'F'],
+	// 	['', '', '', '', '', ''],
+	// 	['', '', '', '', '', ''],
+	// 	['', '', '', '', '', ''],
+	// 	['', '', '', '', '', ''],
+	// 	['', '', '', '', '', ''],
+	// ]);
+	const [wordRows, setWordRows] = useState(InitialRows);
 	const [clues, setClues] = useState(InitialRows);
+	const [letterPos, setLetterPos] = useState(0);
 
 	const handleSubmit = () => {
 
@@ -40,7 +43,7 @@ const GameContainer = () => {
 		invoke('check_word', { wordGuess: theWord })
 			.then((response) => {
 				let stringResponse: string = response as string;
-				let newClues: string[][] = [stringResponse.split('')];
+				let newClues: string[][] = [stringResponse.split('')]; // "xxoxxox" => ['x', 'x', 'o', 'x', 'x', 'o', 'x']
 				let oldClues: string[][] = clues.slice(1);
 				newClues = newClues.concat(oldClues);
 				setClues(newClues);
@@ -50,15 +53,33 @@ const GameContainer = () => {
 			})
 	}
 
-	const handleKeyDown = useCallback((event: KeyboardEvent) => {
+		const handleKeyDown = useCallback((event: KeyboardEvent) => {
 		const { key, keyCode } = event;
+		// si es ENTER
 		if (keyCode === 13) {
 			// TODO: validar cantidad de letras antes del submit o hacer que check_word tire error??
 			handleSubmit();
 		}
 		if (keyCode >= 65 && keyCode <= 90) {
 			// TODO: tienen que completar la linea del turno actual
-			alert(`Key pressed ${key} \n Key code Value: ${keyCode}`);
+		  // alert(`Key pressed ${key} \n Key code Value: ${keyCode}`);
+
+			// update wordRows with the new letter
+			// wordRows[0][1] = key;
+
+
+			let row = ['', '','','','',''];
+			row[letterPos] = key
+			console.log({letterPos});
+			const newWord: string[] = row;
+			let newLetterPos = letterPos + 1;
+			
+			let newWordRows: string[][] = [newWord]; // "xxoxxox" => ['x', 'x', 'o', 'x', 'x', 'o', 'x']
+			let oldWordRows: string[][] = wordRows.slice(1);
+			newWordRows = newWordRows.concat(oldWordRows);
+			setLetterPos(newLetterPos > 5 ? 0 : newLetterPos);
+			setWordRows(newWordRows);
+			
 		}
 	}, []);
 
